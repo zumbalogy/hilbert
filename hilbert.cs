@@ -1,11 +1,12 @@
 // http://stackoverflow.com/questions/499166/mapping-n-dimensional-value-to-a-point-on-hilbert-curve
 
 namespace HilbertExtensions {
+  using System;
   // Convert between Hilbert index and N-dimensional points.
   //
   // The Hilbert index is expressed as an array of transposed bits.
   //
-  // Example: 5 bits for each of n=3 coordinates.
+  // Example: 5 bits for each of n = 3 coordinates.
   // 15-bit Hilbert integer = A B C D E F G H I J K L M N O is stored as its Transpose
   //
   //                                         ^   7
@@ -94,6 +95,25 @@ namespace HilbertExtensions {
         X[i] ^= t;
       }
       return X;
+    }
+
+    static public void Main() {
+      uint[] foo = HilbertIndexTransposed(new uint [] { 100, 5, 90 }, 32);
+      Console.WriteLine("hilbert axes");
+      Console.WriteLine(foo[0]);
+      Console.WriteLine(foo[1]);
+      Console.WriteLine(foo[2]);
+      Console.WriteLine("len");
+      Console.WriteLine(foo.GetLength(0));
+      Console.WriteLine("-");
+      Console.WriteLine("transpose");
+      uint[] bar = HilbertAxes(foo, 32);
+      Console.WriteLine(bar[0]);
+      Console.WriteLine(bar[1]);
+      Console.WriteLine(bar[2]);
+      Console.WriteLine("len");
+      Console.WriteLine(bar.GetLength(0));
+      Console.WriteLine("-");
     }
   }
 }
