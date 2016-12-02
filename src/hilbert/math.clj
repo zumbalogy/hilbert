@@ -14,7 +14,6 @@
     @n2))
 
 (defn gray-decode-travel [start end mask g]
-  ; (println start end mask g)
   (let [travel-bit (bit-xor start end)
         modulus (inc mask)
         rg (* (bit-xor g start)
@@ -33,7 +32,6 @@
         end-i (min mask (bit-or 1 (inc i)))
         child-start (gray-encode-travel parent-start parent-end mask start-i)
         child-end (gray-encode-travel parent-start parent-end mask end-i)]
-    (println start-i end-i)
     [child-start child-end]))
 
 (defn transpose-bits [srcs nDests]
@@ -102,7 +100,6 @@
     (doseq [j (range nChunks)]
       (let [i (gray-decode-travel @start @end mask (get coord-chunks j))
             [start2 end2] (child-start-end @start @end mask i)]
-        (println @start @end mask i)
         (swap! index-chunks assoc j i)
         (reset! start start2)
         (reset! end end2)))
