@@ -69,12 +69,12 @@
 
 (defn pack-index [chunks nD]
   (let [p (Math/pow 2 nD)]
-    (int (reduce #(+ %2 (* %1 p)) chunks))))
+    (bigint (reduce #(+ %2 (* %1 p)) chunks))))
 
 (defn initial-end [nChunks nD]
   (int (Math/pow 2 (mod (dec (- nChunks)) nD))))
 
-(defn int->hilbert [i nD]
+(defn int->coord [i nD]
   (let [index-chunks (unpack-index i nD)
         nChunks (count index-chunks)
         mask (dec (int (Math/pow 2 nD)))
@@ -89,7 +89,7 @@
         (reset! end end2)))
     (pack-coords @coord-chunks nD)))
 
-(defn hilbert->int [coords]
+(defn coord->int [coords]
   (let [nD (count coords)
         coord-chunks (unpack-coords coords)
         nChunks (count coord-chunks)
