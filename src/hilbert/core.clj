@@ -1,6 +1,5 @@
 (ns hilbert.core
   (require [hilbert.math :refer [coord->int int->coord]]
-           [clojure.math.combinatorics :as combo]
            [mikera.image.core :as img]
            [mikera.image.colours :as color]
            [bardo.ease :as ease]))
