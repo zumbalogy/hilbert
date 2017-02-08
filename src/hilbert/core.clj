@@ -47,7 +47,7 @@
         (aset pixels2 i p2)))
     (img/set-pixels pic pixels2)
     (show pic)
-    (img/save pic (str "output/" (System/currentTimeMillis) ".png")) ; should this  be a future?
+    ; (img/save pic (str "output/" (System/currentTimeMillis) ".png")) ; should this  be a future?
     ))
 
 (defn cubic-range [start end n-steps]
@@ -88,6 +88,6 @@
       (time (make-fish pic 0))))
       ; (time (make-fish pic 300))))
       ; (time (make-fish pic h))))
-      ; (doseq [i (range 0 3600 24)]
+      ; (doseq [i (range 0 3600 12)]
       ;   (println i " out of " stop)
       ;   (time (make-fish pic i)))))

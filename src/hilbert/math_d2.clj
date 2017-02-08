@@ -1,11 +1,17 @@
 (ns hilbert.math_d2)
 
-(defn gray-encode [n]
-  (case n
-    0 0
-    1 1
-    2 3
-    3 2))
+(defn gray-encode [bn]
+  (bit-xor bn (quot bn 2)))
+
+(defn gray-decode [n]
+  (let [sh (atom 1)
+        dv (atom (bit-shift-right n @sh))
+        n2 (atom (bit-xor n @dv))]
+    (while (> @dv 1)
+      (reset! sh (bit-shift-left @sh 1))
+      (reset! dv (bit-shift-right @n2 @sh))
+      (reset! n2 (bit-xor @n2 @dv)))
+    @n2))
 
 (defn gray-decode-travel [start end g]
   (let [travel-bit (bit-xor start end)
@@ -13,13 +19,7 @@
               (quot 4 (* 2 travel-bit)))
               ; 3)
               ]
-    (case rg
-      0 0
-      1 1
-      2 3
-      3 2
-      4 1
-      6 2)))
+    (gray-decode (bit-and 3 (bit-or rg (quot rg 4))))))
 
 (defn gray-encode-travel [start end i]
   (let [travel-bit (bit-xor start end)
