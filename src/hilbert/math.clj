@@ -1,5 +1,7 @@
 (ns hilbert.math)
 
+; (set! *unchecked-math* true)
+
 (defn gray-encode [bn]
   (bit-xor bn (quot bn 2)))
 
@@ -104,3 +106,44 @@
         (reset! start start2)
         (reset! end end2)))
     (pack-index @index-chunks nD)))
+
+(defn transpose-bits2 [x y]
+  (let [x (atom x)
+        y (atom y)
+        dests (atom [0 0 0 0 0 0 0 0])]
+    (doseq [j (range 8)]
+      )
+    ; (swap! dests assoc j (+ (* 2 (rem @x 2)) (rem @y 2)))
+      ; (swap! dests assoc j (rem (+ @x @y) 5))
+      ; (swap! dests assoc j (* @x @y)))
+      ; (swap! x quot 2)
+      ; (swap! y quot 2))
+    (vec (rseq @dests))))
+
+
+; (defn transpose-bits [srcs nDests]
+;   (let [srcs (atom srcs)
+;         nSrcs (count @srcs)
+;         dests (atom (vec (repeat nDests 0)))]
+;     (doseq [j (range (dec nDests) -1 -1)]
+;       (let [dest (atom 0)]
+;         (doseq [k (range nSrcs)]
+;           (let [sk (get @srcs k)]
+;             (reset! dest (+ (* 2 @dest) (mod sk 2)))
+;             (swap! srcs assoc k (quot sk 2))))
+;         (swap! dests assoc j @dest)))
+;     @dests))
+
+
+(defn xy->int [x y]
+  (let [coord-chunks (transpose-bits [x y] 2)
+        start (atom 0)
+        end (atom (initial-end 8 2))
+        index-chunks (atom [])]
+    (doseq [chunk coord-chunks]
+      (let [i (gray-decode-travel @start @end 3 chunk)
+            [start2 end2] (child-start-end @start @end 3 i)]
+        (swap! index-chunks conj chunk)
+        (reset! start start2)
+        (reset! end end2)))
+    (pack-index @index-chunks 2)))

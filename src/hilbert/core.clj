@@ -1,5 +1,5 @@
 (ns hilbert.core
-  (require [hilbert.math :refer [coord->int int->coord]]
+  (require [hilbert.math :refer [coord->int int->coord xy->int]]
            [mikera.image.core :as img]
            [mikera.image.colours :as color]
            [bardo.ease :as ease]))
@@ -12,7 +12,7 @@
 
 (def rgb color/components-rgb)
 
-(defn component [[r g b]]
+(defn component [r g b]
   (color/rgb-from-components r g b))
 
 (defn next-pow2 [x]
@@ -30,20 +30,24 @@
       (let [p (get pixels i)
             x (rem i width)
             y (quot i width)
+            ; h (coord->int [x y])
+            [r g b] (rgb p)
+            ; h (xy->int x y)
             h (coord->int [x y])
             [x2 y2] (int->coord (rem (+ h input) max-h) 2)
             ; try pushing them by x or y
             h2 (+ x2 (* width y2))
-            p2 (get pixels (rem h2 size))
-            [r g b] (rgb p)
-            h3 (coord->int [r g (+ r b x)])
-            h4 (+ h3 (* b input))
-            [r2 g2 b2] (int->coord h4 3)
-            p3 (component [r2 g2 b2])]
-        (aset pixels2 i p3)))
+            p2 (get pixels (rem h2 size))]
+            ; [r g b] (rgb p)
+            ; h3 (coord->int [r g (+ r b x)])
+            ; h4 (+ h3 (* b input))
+            ; [r2 g2 b2] (int->coord h4 3)
+            ; p3 (component r2 g2 b2)]
+        (aset pixels2 i p2)))
     (img/set-pixels pic pixels2)
     (show pic)
-    (img/save pic (str "bar_output/" (System/currentTimeMillis) ".png"))))
+    ; (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
+    ))
 
 (defn cubic-range [start end n-steps]
   (let [obj (ease/ease :cubic-in-out)
@@ -53,6 +57,22 @@
     (map #(+ start (* % diff)) obj-range)))
 
 (defn -main []
+  ; (time (coord->int [300 300]))
+  ; (println (coord->int [300 300]))
+  ; (time (coord->int [300 300]))
+  ; (time (coord->int [300 300]))
+  ; (time (coord->int [300 300]))
+  ; (time (coord->int [301 301]))
+  ; (println)
+  ; (time (int->coord 123456 2))
+  ; (println (int->coord 123456 2))
+  ; (time (int->coord 123456 2))
+  ; (time (int->coord 123456 2))
+  ; (time (int->coord 123456 2))
+  ; (time (int->coord 123459 2))
+  ; (time (int->coord 123459 3))
+  ; )
+  ; (let [pic (img/load-image "resources/rainbow_300.png")])
   (let [pic (img/load-image "resources/fish_256.png")
         width (img/width pic)
         height (img/height pic)
@@ -60,11 +80,13 @@
         h (coord->int [width height])
         start 0
         stop h
-        n-steps 128
+        n-steps 100
         step (inc (quot (- stop start) n-steps))
         steps (range start stop step)
         smooth (cubic-range start stop n-steps)]
-      (make-fish pic 400)))
-      ; (doseq [i smooth]
+      (time (make-fish pic 0))))
+      ; (time (make-fish pic 300))))
+      ; (time (make-fish pic h))))
+      ; (doseq [i (range 0 3600 70)]
       ;   (println i " out of " stop)
       ;   (make-fish pic i))))
