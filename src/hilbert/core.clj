@@ -88,6 +88,6 @@
       (time (make-fish pic 0))))
       ; (time (make-fish pic 300))))
       ; (time (make-fish pic h))))
-      ; (doseq [i (range 0 3600 12)]
+      ; (doseq [i (range 0 3600 24)]
       ;   (println i " out of " stop)
       ;   (time (make-fish pic i)))))

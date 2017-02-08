@@ -6,15 +6,6 @@
     1 1
     2 3
     3 2))
-  ; (println bn)
-  ; (bit-xor bn (quot bn 2)))
-
-; (defn gray-decode [n]
-;   (case n
-;     0 0
-;     1 1
-;     2 3
-;     3 2))
 
 (defn gray-decode-travel [start end g]
   (let [travel-bit (bit-xor start end)
@@ -32,7 +23,8 @@
 
 (defn gray-encode-travel [start end i]
   (let [travel-bit (bit-xor start end)
-        g (* (gray-encode i) (* 2 travel-bit))]
+        g (* (gray-encode i) (* 2 travel-bit))
+        ]
     (bit-xor start (bit-and 3 (bit-or g (quot g 4))))))
 
 (defn child-start-end [parent-start parent-end i]
