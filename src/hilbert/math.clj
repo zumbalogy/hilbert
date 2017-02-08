@@ -107,43 +107,19 @@
         (reset! end end2)))
     (pack-index @index-chunks nD)))
 
-(defn transpose-bits2 [x y]
-  (let [x (atom x)
-        y (atom y)
-        dests (atom [0 0 0 0 0 0 0 0])]
-    (doseq [j (range 8)]
-      (swap! dests assoc j (+ (* 2 (rem @x 2)) (rem @y 2)))
-      (swap! dests assoc j (rem (+ @x @y) 5))
-      (swap! dests assoc j (* @x @y))
-      (swap! x quot 2)
-      (swap! y quot 2)
-      )
-    (vec (rseq @dests))))
-
-
-; (defn transpose-bits [srcs nDests]
-;   (let [srcs (atom srcs)
-;         nSrcs (count @srcs)
-;         dests (atom (vec (repeat nDests 0)))]
-;     (doseq [j (range (dec nDests) -1 -1)]
-;       (let [dest (atom 0)]
-;         (doseq [k (range nSrcs)]
-;           (let [sk (get @srcs k)]
-;             (reset! dest (+ (* 2 @dest) (mod sk 2)))
-;             (swap! srcs assoc k (quot sk 2))))
-;         (swap! dests assoc j @dest)))
-;     @dests))
-
+(defn transpose-xy [x y]
+  (let [xs (iterate #(quot % 2) x)
+        ys (iterate #(quot % 2) y)
+        x2s (map #(* 2 (rem % 2)) xs)
+        y2s (map #(rem % 2) ys)
+        dests (map + x2s y2s)]
+    (reverse (take 8 dests)))) ; for coordinates up to 256 (2^8)
 
 (defn xy->int [x y]
-  ; (let [coord-chunks (transpose-bits2 x y)
-  (let [coord-chunks (unpack-coords [x y])
-        nChunks (count coord-chunks)
+  (let [coord-chunks (transpose-xy x y)
         start (atom 0)
-        ; end (atom (initial-end 8 2))
-        end (atom (initial-end nChunks 2))
-        ; index-chunks (atom [])]
-        index-chunks (atom (vec (repeat nChunks 0)))]
+        end (atom 2)
+        index-chunks (atom [])]
     (doseq [chunk coord-chunks]
       (let [i (gray-decode-travel @start @end 3 chunk)
             [start2 end2] (child-start-end @start @end 3 i)]
@@ -152,3 +128,32 @@
         (reset! start start2)
         (reset! end end2)))
     (pack-index @index-chunks 2)))
+
+(defn unpack-index [i nD]
+  (let [i (atom i)
+        p (Math/pow 2 nD)
+        nChunks (-> @i inc (log p) Math/ceil int (max 1))
+        chunks (atom (vec (repeat nChunks 0)))]
+    (doseq [j (range (dec nChunks) -1 -1)]
+      (swap! chunks assoc j (int (mod @i p)))
+      (swap! i quot p))
+    @chunks))
+
+(defn unpack-index2 [i]
+  (let [is (iterate #(quot % 4) i)
+        chunks (map #(int (mod % (int 4))) is)]
+    (vec (reverse (take 8 chunks)))))
+
+(defn int->xy [i]
+  (let [index-chunks (unpack-index2 i)
+        nChunks (count index-chunks)
+        start (atom 0)
+        end (atom (initial-end nChunks 2))
+        coord-chunks (atom (vec (repeat nChunks 0)))]
+    (doseq [j (range nChunks)]
+      (let [i (get index-chunks j)
+            [start2 end2] (child-start-end @start @end 3 i)]
+        (swap! coord-chunks assoc j (gray-encode-travel @start @end 3 i))
+        (reset! start start2)
+        (reset! end end2)))
+    (pack-coords @coord-chunks 2)))

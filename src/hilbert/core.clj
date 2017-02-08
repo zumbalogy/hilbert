@@ -1,5 +1,5 @@
 (ns hilbert.core
-  (require [hilbert.math :refer [coord->int int->coord xy->int]]
+  (require [hilbert.math :as hm :refer [coord->int int->coord xy->int int->xy]]
            [mikera.image.core :as img]
            [mikera.image.colours :as color]
            [bardo.ease :as ease]))
@@ -33,7 +33,8 @@
             [r g b] (rgb p)
             h (xy->int x y)
             ; h (coord->int [x y])
-            [x2 y2] (int->coord (rem (+ h input) max-h) 2)
+            ; [x2 y2] (int->coord (rem (+ h input) max-h) 2)
+            [x2 y2] (int->xy (rem (+ h input) max-h))
             ; try pushing them by x or y
             h2 (+ x2 (* width y2))
             p2 (get pixels (rem h2 size))]
@@ -45,7 +46,7 @@
         (aset pixels2 i p2)))
     (img/set-pixels pic pixels2)
     (show pic)
-    ; (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
+    (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
     ))
 
 (defn cubic-range [start end n-steps]
