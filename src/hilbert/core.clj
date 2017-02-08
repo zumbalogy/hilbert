@@ -30,10 +30,9 @@
       (let [p (get pixels i)
             x (rem i width)
             y (quot i width)
-            ; h (coord->int [x y])
             [r g b] (rgb p)
-            ; h (xy->int x y)
-            h (coord->int [x y])
+            h (xy->int x y)
+            ; h (coord->int [x y])
             [x2 y2] (int->coord (rem (+ h input) max-h) 2)
             ; try pushing them by x or y
             h2 (+ x2 (* width y2))

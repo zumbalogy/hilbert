@@ -112,12 +112,12 @@
         y (atom y)
         dests (atom [0 0 0 0 0 0 0 0])]
     (doseq [j (range 8)]
+      (swap! dests assoc j (+ (* 2 (rem @x 2)) (rem @y 2)))
+      (swap! dests assoc j (rem (+ @x @y) 5))
+      (swap! dests assoc j (* @x @y))
+      (swap! x quot 2)
+      (swap! y quot 2)
       )
-    ; (swap! dests assoc j (+ (* 2 (rem @x 2)) (rem @y 2)))
-      ; (swap! dests assoc j (rem (+ @x @y) 5))
-      ; (swap! dests assoc j (* @x @y)))
-      ; (swap! x quot 2)
-      ; (swap! y quot 2))
     (vec (rseq @dests))))
 
 
@@ -136,14 +136,19 @@
 
 
 (defn xy->int [x y]
-  (let [coord-chunks (transpose-bits [x y] 2)
+  ; (let [coord-chunks (transpose-bits2 x y)
+  (let [coord-chunks (unpack-coords [x y])
+        nChunks (count coord-chunks)
         start (atom 0)
-        end (atom (initial-end 8 2))
-        index-chunks (atom [])]
+        ; end (atom (initial-end 8 2))
+        end (atom (initial-end nChunks 2))
+        ; index-chunks (atom [])]
+        index-chunks (atom (vec (repeat nChunks 0)))]
     (doseq [chunk coord-chunks]
       (let [i (gray-decode-travel @start @end 3 chunk)
             [start2 end2] (child-start-end @start @end 3 i)]
-        (swap! index-chunks conj chunk)
+        ; (swap! index-chunks conj j) ;
+        (swap! index-chunks conj i)
         (reset! start start2)
         (reset! end end2)))
     (pack-index @index-chunks 2)))
