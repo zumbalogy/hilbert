@@ -1,6 +1,7 @@
 (ns hilbert.core
   (require [hilbert.math :as hm :refer [coord->int int->coord]]
            [hilbert.math_d2 :as d2]
+           [hilbert.attract :as attract]
            [mikera.image.core :as img]
            [mikera.image.colours :as color]
            [bardo.ease :as ease]))
@@ -58,33 +59,53 @@
         obj-range (map obj tiny-range)]
     (map #(+ start (* % diff)) obj-range)))
 
-(defn -main []
-  ; (time (coord->int [300 300]))
-  ; (println (coord->int [300 300]))
-  ; (println)
-  ; (time (int->coord 123456 2))
-  ; (println (int->coord 123456 2))
-  ; (time (int->coord 123459 3))
-  ; )
-  ; (let [pic (img/load-image "resources/rainbow_300.png")])
-  (let [pic (img/load-image "resources/night_800.jpg")
+(defn attract-fish [input-pic _iterations]
+  (let [pic (img/copy input-pic)
+        pixels (img/get-pixels pic)
+        pixels2 (img/get-pixels pic)
         width (img/width pic)
         height (img/height pic)
-        size (* width height)
-        max-color-h (coord->int [256 256 256])
-        h (coord->int [width height])
-        start 0
-        stop max-color-h
-        n-steps 128
-        step (inc (quot (- stop start) n-steps))
-        steps (range start stop step)
-        smooth (cubic-range start stop n-steps)]
-      ; (make-fish pic 1000)))
-      ; (time (make-fish pic 0))
-      ; (time (make-fish pic max-color-h))))
-      ; (time (make-fish pic h))))
-      ; (doseq [i (range 0 h 12)]
-      ;   (println i " out of " stop)
-        (doseq [i smooth]
-          (make-fish pic (int i))
-          (println (int i) " out of " stop))))
+        size (* width height)]
+    (dotimes [i size]
+      (let [p (get pixels i)
+            x (rem i width)
+            y (quot i width)
+            [r g b] (rgb p)
+            [r2 g2 b2] (attract/duffing [r g b])
+            p3 (component r2 g2 b2)]
+        (aset pixels2 i p3)))
+    (img/set-pixels pic pixels2)
+    (show pic)
+    (img/save pic (str "output2/" (System/currentTimeMillis) ".png"))
+    ))
+
+(defn -main []
+  ; (let [pic (img/load-image "resources/night_800.jpg")
+  (let [pic (img/load-image "resources/fish_300.png")
+        width (img/width pic)
+        height (img/height pic)
+        size (* width height)]
+      (attract-fish pic 1000)))
+
+; (defn -main []
+;   (let [pic (img/load-image "resources/night_800.jpg")
+;         width (img/width pic)
+;         height (img/height pic)
+;         size (* width height)
+;         max-color-h (coord->int [256 256 256])
+;         h (coord->int [width height])
+;         start 0
+;         stop max-color-h
+;         n-steps 128
+;         step (inc (quot (- stop start) n-steps))
+;         steps (range start stop step)
+;         smooth (cubic-range start stop n-steps)]
+;       ; (make-fish pic 1000)))
+;       ; (time (make-fish pic 0))
+;       ; (time (make-fish pic max-color-h))))
+;       ; (time (make-fish pic h))))
+;       ; (doseq [i (range 0 h 12)]
+;       ;   (println i " out of " stop)
+;         (doseq [i smooth]
+;           (make-fish pic (int i))
+;           (println (int i) " out of " stop))))

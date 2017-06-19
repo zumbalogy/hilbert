@@ -17,3 +17,10 @@
         y2 (+ y (* 0.01 (- (* x (- 28 z)) y)))
         z2 (+ z (* 0.01 (- (* y x) (* @d z))))]
     [x2 y2 z2]))
+
+(defn duffing [[x y z]]
+  (let [h (/ @a 20)
+        x2 (+ x (* h y))
+        y2 (+ y (* h (+ (- x (* x x x) (* @c y)) (* @d (Math/cos z)))))
+        z2 (+ z h)]
+    [x2 y2 z2]))
