@@ -1,0 +1,36 @@
+# python
+
+def int_to_Hilbert4( i, nD=4 ):  # Default is the 2D Hilbert walk.
+    index_chunks = unpack_index( i, nD )
+    nChunks = len( index_chunks )
+    mask = 2 ** nD - 1
+    start, end = initial_start_end( nChunks, nD )
+    coord_chunks = [0] * nChunks
+    for j in range( nChunks ):
+        i = index_chunks[ j ]
+        coord_chunks[ j ] = gray_encode_travel( start, end, mask, i )
+        start, end = child_start_end( start, end, mask, i )
+    return pack_coords( coord_chunks, nD )
+
+
+im2 = Image.new(im.mode, im.size)
+
+im2.putdata(map(tuple, spoon))
+
+im2.save("2d.jpg")
+
+
+coords = map(lambda (i, x): [i / 100, i % 100], enumerate(data2))
+
+h_coords = map(Hilbert_to_int, coords)
+h_coords2 = map(lambda x: x + 1000, h_coords)
+
+coords2 = map(lambda x: int_to_Hilbert(x, 2), h_coords2)
+
+spoon = map(lambda x: data[((x[1] * 300) + x[0]) % len(data)], coords2)
+
+im2 = Image.new(im.mode, im.size)
+
+im2.putdata(map(tuple, spoon))
+
+im2.save("2d.jpg")
