@@ -34,19 +34,18 @@
             x (rem i width)
             y (quot i width)
             [r g b] (rgb p)
-            ; h (coord->int [x y])
-            ; h (coord->int [x y])
+            h (coord->int [x y])
             ; [x2 y2] (int->coord (rem (+ h input) max-h) 2)
-            ; [x2 y2] (int->coord (rem (+ h input) max-h) 2)
+            [x2 y2] (int->coord (rem (+ h input) max-h) 2)
             ; try pushing them by x or y
-            ; h2 (+ x2 (* width y2))
-            ; p2 (get pixels (rem h2 size))]
-            [r g b] (rgb p)
-            h3 (coord->int [r g b])
-            h4 (mod (bigint (+ h3 input)) max-color-h)
-            [r2 g2 b2] (int->coord h4 3)
-            p3 (component r2 g2 b2)]
-        (aset pixels2 i p3)))
+            h2 (+ x2 (* width y2))
+            p2 (get pixels (rem h2 size))]
+            ; [r g b] (rgb p)
+            ; h3 (coord->int [r g b])
+            ; h4 (mod (bigint (+ h3 input)) max-color-h)
+            ; [r2 g2 b2] (int->coord h2 3)
+            ; p3 (component r2 g2 b2)]
+        (aset pixels2 i p2)))
     (img/set-pixels pic pixels2)
     (show pic)
     (img/save pic (str "output2/" (System/currentTimeMillis) ".png")) ; should this  be a future?
@@ -71,14 +70,14 @@
             x (rem i width)
             y (quot i width)
             [r g b] (rgb p)
-            [r2 g2 b2] (attract/duffing [r g b])
+            [r2 g2 b2] (attract/aizawa [r x i])
             p3 (component r2 g2 b2)]
         (aset pixels2 i p3)))
     (img/set-pixels pic pixels2)
     (show pic)
     (img/save pic (str "output2/" (System/currentTimeMillis) ".png"))
     ))
-
+;
 (defn -main []
   ; (let [pic (img/load-image "resources/night_800.jpg")
   (let [pic (img/load-image "resources/fish_300.png")
@@ -88,7 +87,8 @@
       (attract-fish pic 1000)))
 
 ; (defn -main []
-;   (let [pic (img/load-image "resources/night_800.jpg")
+;   ; (let [pic (img/load-image "resources/night_800.jpg")
+;   (let [pic (img/load-image "resources/fish_256.png")
 ;         width (img/width pic)
 ;         height (img/height pic)
 ;         size (* width height)
@@ -100,12 +100,12 @@
 ;         step (inc (quot (- stop start) n-steps))
 ;         steps (range start stop step)
 ;         smooth (cubic-range start stop n-steps)]
-;       ; (make-fish pic 1000)))
+;       (make-fish pic 0)))
 ;       ; (time (make-fish pic 0))
 ;       ; (time (make-fish pic max-color-h))))
 ;       ; (time (make-fish pic h))))
 ;       ; (doseq [i (range 0 h 12)]
 ;       ;   (println i " out of " stop)
-;         (doseq [i smooth]
-;           (make-fish pic (int i))
-;           (println (int i) " out of " stop))))
+;         ; (doseq [i smooth]
+;         ;   (make-fish pic (int i))
+;         ;   (println (int i) " out of " stop))))
