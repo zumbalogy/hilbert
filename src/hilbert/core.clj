@@ -4,6 +4,7 @@
            [hilbert.attract :as attract]
            [mikera.image.core :as img]
            [mikera.image.colours :as color]
+           [debugger.core :as bug]
            [bardo.ease :as ease]))
 
 (defn show [pic]
@@ -27,22 +28,45 @@
       (show pic)
       (img/save pic (str "output/" (System/currentTimeMillis) ".png")))))
 
+(defn get-quad [q box]
+  (let [h (quot box 2)]
+  ))
+
+(defn box [pixels quadrants]
+  ; quadrants is to be a series of integers, each going into a sub-quadrant
+  ; for example: [0 3] would be in the middle on the right, [0 0 0] top right
+
+  )
+
+(defn break-box [box]
+  (let []
+    ))
+
+(defn build-box [q1 q2 q3 q4]
+  (let [h (count (img/get-pixels q1))
+        side (* 2 h)
+        box (img/new-image side side)
+        pixels (img/get-pixels box)]
+    (dotimes [i (* side side)]
+      (let [x (rem i side)
+            y (quot i side)
+            offset-y (quot y 2)]
+        (aset pixels i (cond (and (<= x h) (<= y h)) (get (+    x       offset-y)   q1)
+                             (and (>  x h) (<= y h)) (get (+ (- x h)    offset-y)   q2)
+                             (and (<= x h) (>  y h)) (get (+    x    (- offset-y h) q3))
+                             (and (>  x h) (>  y h)) (get (+ (- x h) (- offset-y h) q4))))))
+    (img/set-pixels box pixels)
+    box)
+
 (defn -main []
   (let [input-pic (img/load-image "resources/fish_300.png")
         pic (img/copy input-pic)
+        pic2 (img/sub-image pic 100 100 100 100)
         pixels (img/get-pixels pic)
-        pixels2 (img/get-pixels pic)
         width (img/width pic)
         height (img/height pic)
-        size (* width height)]
-    (dotimes [i size]
-      (let [p (get pixels i)
-            x (rem i width)
-            y (quot i width)
-            [r g b] (rgb p)
-            gray (quot (* r g) 228)
-            p2 (component gray gray gray)
-            ; p3 (get pixels (* size (rand)))
-            ]
-        (aset pixels2 i p2)))
-    (save pixels2 width height)))
+        size (* width height)
+        pic7 (build-box pic2 pic2 pic2 pic2)
+        ]
+    (save pic7 width height)
+    ))
