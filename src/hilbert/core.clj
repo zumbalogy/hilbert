@@ -43,30 +43,21 @@
     ))
 
 (defn build-box [q1 q2 q3 q4]
-  (let [h (count (img/get-pixels q1))
-        side (* 2 h)
-        box (img/new-image side side)
-        pixels (img/get-pixels box)]
-    (dotimes [i (* side side)]
-      (let [x (rem i side)
-            y (quot i side)
-            offset-y (quot y 2)]
-        (aset pixels i (cond (and (<= x h) (<= y h)) (get (+    x       offset-y)   q1)
-                             (and (>  x h) (<= y h)) (get (+ (- x h)    offset-y)   q2)
-                             (and (<= x h) (>  y h)) (get (+    x    (- offset-y h) q3))
-                             (and (>  x h) (>  y h)) (get (+ (- x h) (- offset-y h) q4))))))
-    (img/set-pixels box pixels)
-    box)
+  (let [h (count q1)
+        side (int (Math/sqrt h))
+        box (img/new-image (* 2 side) (* 2 side))
+        top (mapcat concat (partition side q1) (partition side q2))
+        bottom (mapcat concat (partition side q3) (partition side q4))]
+    (int-array (concat top bottom))))
 
 (defn -main []
   (let [input-pic (img/load-image "resources/fish_300.png")
         pic (img/copy input-pic)
         pic2 (img/sub-image pic 100 100 100 100)
         pixels (img/get-pixels pic)
+        pixels2 (img/get-pixels pic2)
         width (img/width pic)
         height (img/height pic)
         size (* width height)
-        pic7 (build-box pic2 pic2 pic2 pic2)
-        ]
-    (save pic7 width height)
-    ))
+        box (build-box pixels2 pixels2 pixels2 pixels2)]
+    (save box 200 200)))
