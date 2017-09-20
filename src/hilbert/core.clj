@@ -39,8 +39,16 @@
   )
 
 (defn break-box [box]
-  (let []
-    ))
+  (println (int (Math/sqrt (count box))))
+  (let [half (quot (count box) 2)
+        side (quot (int (Math/sqrt (count box))) 2)
+        top (partition side (take half box))
+        bottom (partition side (drop half box))
+        q1 (int-array (flatten (take-nth 2 top)))
+        q2 (int-array (flatten (take-nth 2 (rest top))))
+        q3 (int-array (flatten (take-nth 2 bottom)))
+        q4 (int-array (flatten (take-nth 2 (rest bottom))))]
+    [q1 q2 q3 q4]))
 
 (defn build-box [q1 q2 q3 q4]
   (let [h (count q1)
@@ -51,13 +59,19 @@
     (int-array (concat top bottom))))
 
 (defn -main []
-  (let [input-pic (img/load-image "resources/fish_300.png")
+  (let [input-pic (img/load-image "resources/fish_256.png")
         pic (img/copy input-pic)
         pic2 (img/sub-image pic 100 100 100 100)
         pixels (img/get-pixels pic)
         pixels2 (img/get-pixels pic2)
+        [q1 q2 q3 q4] (break-box pixels)
         width (img/width pic)
         height (img/height pic)
         size (* width height)
         box (build-box pixels2 pixels2 pixels2 pixels2)]
-    (save box 200 200)))
+    ; (save box 200 200)
+    (save q1 128 128)
+    (save q2 128 128)
+    (save q3 128 128)
+    (save q4 128 128)
+    ))
