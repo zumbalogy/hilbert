@@ -48,7 +48,7 @@
         (aset pixels2 i p2)))
     (img/set-pixels pic pixels2)
     (show pic)
-    (img/save pic (str "output2/" (System/currentTimeMillis) ".png")) ; should this  be a future?
+    (img/save pic (str "output/" (System/currentTimeMillis) ".png")) ; should this  be a future?
     ))
 
 (defn cubic-range [start end n-steps]
