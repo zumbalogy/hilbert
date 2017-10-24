@@ -12,3 +12,9 @@ pom.xml.asc
 *.log
 /output
 /*_output*
+**/*.so
+**/*.o
+*~
+\#*\#
+**/.\#
+*.log
