@@ -80,24 +80,24 @@
     ))
 
 
-(defn -main []
-  (dotimes [i 1]
-   ; (let [pic (img/load-image "resources/fish_256.png")
-    (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
-          pixels (img/get-pixels pic)]
-      (time (jna/invoke Integer curve/test pixels))
-      (img/set-pixels pic pixels)
-      (show pic)
-      (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
-      )))
-
 ;; (defn -main []
-;;   ; (let [pic (img/load-image "resources/night_800.jpg")
-;;   (let [pic (img/load-image "resources/fish_300.png")
-;;         width (img/width pic)
-;;         height (img/height pic)
-;;         size (* width height)]
-;;       (make-fish pic 1000)))
+;;   (dotimes [i 1]
+;;    ; (let [pic (img/load-image "resources/fish_256.png")
+;;     (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
+;;           pixels (img/get-pixels pic)]
+;;       (time (jna/invoke Integer curve/test pixels))
+;;       (img/set-pixels pic pixels)
+;;       (show pic)
+;;       (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
+;;       )))
+
+(defn -main []
+  ; (let [pic (img/load-image "resources/night_800.jpg")
+  (let [pic (img/load-image "resources/fish_300.png")
+        width (img/width pic)
+        height (img/height pic)
+        size (* width height)]
+      (make-fish pic 1000)))
 
 ; (defn -main []
 ;   ; (let [pic (img/load-image "resources/night_800.jpg")
