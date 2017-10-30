@@ -65,7 +65,6 @@
   ;(/ (Math/log a) (Math/log b)))
 
 (defn unpack-coords [coords]
-  (println coords)
   (let [biggest (apply max coords)
         nChunks (-> biggest inc (log 2) Math/ceil int (max 1))]
     (transpose-bits coords nChunks)))

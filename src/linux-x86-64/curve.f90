@@ -126,15 +126,36 @@ end function logg
 
 function unpack_cords(coords)
   implicit none
-  integer :: unpack_cords(2) ! this might need to be passed in or so
+  integer, allocatable :: unpack_cords(:)
   integer :: coords(2)
   integer :: biggest, nchunks
   real(8) :: logg
-  integer :: transpose_bits(*)
+  integer, allocatable :: transpose_bits
 
   biggest = maxval(coords)
   ! specifying kind maybe better RESULT = CEILING(A [, KIND])
   nchunks = max(1, ceiling(logg(1 + biggest, 2)))
 
   unpack_cords = transpose_bits(coords, nchunks)
+
+  ! I think ill have to use subroutines for things that return arrays
+  ! or put it place where it can see transpose bits is a func
 end function unpack_cords
+
+function unpack_index(i, nd)
+  implicit none
+  integer :: i, nd
+  real(8) :: logg
+  integer :: j, k, p
+  integer :: nchunks
+  integer, allocatable :: chunks(:)
+  integer, allocatable :: unpack_index(:)
+
+  p = 2 ** nd
+  nchunks = max(1, ceiling(log(real(1 + i)) / log(real(2))))
+
+  chunks = (/ (I, I = 1, 10) /)
+
+  unpack_index = chunks
+
+end function unpack_index
