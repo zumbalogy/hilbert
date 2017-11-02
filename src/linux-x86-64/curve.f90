@@ -37,6 +37,8 @@ contains
     integer :: start, end, maskk, g
     integer :: travel_bit, modulus, rg
     integer :: gray_decode
+    integer :: n
+    integer :: sh, dv, n2
 
     travel_bit = ieor(start, end)
     modulus = maskk + 1
@@ -50,7 +52,24 @@ contains
 
     rg = ieor(g, start) * (modulus / (2 * travel_bit))
 
-    gray_decode_travel = gray_decode(iand(maskk, ior(rg, rg / modulus)))
+    n = (iand(maskk, ior(rg, rg / modulus)))
+
+
+    sh = 1
+    dv = rshift(n, sh)
+    n2 = xor(n, dv)
+
+    do while (dv > 1)
+       sh = lshift(sh, 1)
+       dv = rshift(n2, sh)
+       n2 = xor(n2, dv)
+    end do
+
+
+    gray_decode_travel = n2
+
+
+    !gray_decode_travel = gray_decode(iand(maskk, ior(rg, rg / modulus)))
   end function gray_decode_travel
 
   function gray_encode_travel(start, end, maskk, i)
@@ -107,7 +126,6 @@ function child_end(p_start, p_end, maskk, i)
   integer :: child_end
   integer :: p_start, p_end, maskk, i
   integer :: end_i
-  integer :: gray_encode_travel
 
   end_i = min(maskk, ior(1, i + i))
   child_end = gray_encode_travel(p_start, p_end, maskk, end_i)
@@ -309,7 +327,7 @@ contains
     implicit none
     integer :: coord_to_int
     integer, allocatable :: coord_chunks(:)
-    integer, allocatable :: index_chunks(:)
+    integer :: index_chunks(size(coord_chunks))
 
     integer :: child_start
     integer :: child_end
@@ -319,6 +337,8 @@ contains
     integer :: nd, nchunks, mask, start, start2, endd, endd2
     integer :: j, k
 
+    print*, 3243232
+
     nd = size(coords)
     coord_chunks = unpack_coords(coords)
     nchunks = size(coord_chunks)
@@ -327,14 +347,23 @@ contains
     endd = initial_end(nchunks, nd)
     index_chunks(:) = 0 ! might want to allocate this size and not just do it in the loop
 
+
+    print*, "this is number 55"
     do j = 1, nchunks
+       print*, j
        k = gray_decode_travel(start, endd, mask, coord_chunks(j))
+       print*, k
        start2 = child_start(start, endd, mask, k)
+       print*, start2
        endd2 = child_end(start, endd, mask, k)
+       print*, endd2, "qqqqqqqqqqqqqq"
        index_chunks(j) = k
+       print*, nchunks, "sdfd"
        start = start2
        endd = endd2
     end do
+
+    print*, "do i get this far?"
 
     coord_to_int = pack_index(index_chunks, nd)
   end function coord_to_int
