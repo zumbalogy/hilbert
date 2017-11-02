@@ -4,9 +4,9 @@
 ; (set! *unchecked-math* true)
 
 (defn gray-encode [bn]
-  (jna/invoke Integer curve/gray_encode bn))
+  ;; (jna/invoke Integer curve/gray_encode bn))
   ; (println bn (bit-xor bn (quot bn 2)))
-  ; (bit-xor bn (quot bn 2)))
+  (bit-xor bn (quot bn 2)))
 
 (defn gray-decode [n]
 ;  (jna/invoke Integer curve/gray_decode n))
@@ -20,22 +20,22 @@
     @n2))
 
 (defn gray-decode-travel [start end mask g]
-  (jna/invoke Integer curve/gray_decode_travel start end mask g))
-  ;; (let [travel-bit (bit-xor start end)
-  ;;       modulus (inc mask)
-  ;;       rg (* (bit-xor g start)
-  ;;             (quot modulus (* 2 travel-bit)))]
-  ;;   (gray-decode (bit-and mask (bit-or rg (quot rg modulus))))))
+  ;; (jna/invoke Integer curve/gray_decode_travel start end mask g))
+  (let [travel-bit (bit-xor start end)
+        modulus (inc mask)
+        rg (* (bit-xor g start)
+              (quot modulus (* 2 travel-bit)))]
+    (gray-decode (bit-and mask (bit-or rg (quot rg modulus))))))
 
 (defn gray-encode-travel [start end mask i]
   ;(println (jna/invoke Integer curve/gray_encode_travel start end mask i))
-  (jna/invoke Integer curve/gray_encode_travel start end mask i))
-  ;; (let [travel-bit (bit-xor start end)
-  ;;        modulus (inc mask)
-  ;;        g (* (gray-encode i) (* 2 travel-bit))]
-  ;;   (println (bit-xor start (bit-and mask (bit-or g (quot g modulus)))))
-  ;;   (println "-----------")
-  ;;   (bit-xor start (bit-and mask (bit-or g (quot g modulus))))))
+  ;; (jna/invoke Integer curve/gray_encode_travel start end mask i))
+  (let [travel-bit (bit-xor start end)
+         modulus (inc mask)
+         g (* (gray-encode i) (* 2 travel-bit))]
+    ;; (println (bit-xor start (bit-and mask (bit-or g (quot g modulus)))))
+    ;; (println "-----------")
+    (bit-xor start (bit-and mask (bit-or g (quot g modulus))))))
 
 (defn child-start-end [parent-start parent-end mask i]
   ; (= -2 (bit-not 1))
@@ -61,8 +61,7 @@
 (def pack-coords transpose-bits)
 
 (defn log [a b]
-  (jna/invoke Double curve/logg (int a) (int b)))
-  ;(/ (Math/log a) (Math/log b)))
+  (/ (Math/log a) (Math/log b)))
 
 (defn unpack-coords [coords]
   (let [biggest (apply max coords)

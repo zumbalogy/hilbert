@@ -22,8 +22,12 @@ for f in $FILES; do
     O_PATH=$FOLDER/$NAME.o
     SO_PATH=$FOLDER/lib$NAME.so
 
+    rm $O_PATH # todo, these should be silent if nothing is there
+    rm $SO_PATH
+
     gfortran -fno-underscoring -fPIC -c -g -o $O_PATH $f
     gfortran -shared -o $SO_PATH $O_PATH
 done
 
-# TODO: add this as lein task or build task or something
+# TODO: add this as lein task or build task or something (maybe on every save or something to avoid following problem)
+# TODO: compile files in the right order, or all at once. or have a makefile or some such where its explicit
