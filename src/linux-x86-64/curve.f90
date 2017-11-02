@@ -34,21 +34,29 @@ contains
   function gray_decode_travel(start, end, maskk, g)
     implicit none
     integer :: gray_decode_travel
-    integer, value :: start, end, maskk, g
+    integer :: start, end, maskk, g
     integer :: travel_bit, modulus, rg
     integer :: gray_decode
 
     travel_bit = ieor(start, end)
     modulus = maskk + 1
+
+    if (0 == travel_bit) then
+       ! TODO: something better here than this
+       ! pretty sure this should never actually be zero
+       ! so its probably a bug
+       travel_bit = travel_bit + 1
+    end if
+
     rg = ieor(g, start) * (modulus / (2 * travel_bit))
 
     gray_decode_travel = gray_decode(iand(maskk, ior(rg, rg / modulus)))
   end function gray_decode_travel
 
-  function gray_encode_travel(start, end, maskk, i) bind(c)
+  function gray_encode_travel(start, end, maskk, i)
     implicit none
     integer :: gray_encode_travel
-    integer, value :: start, end, maskk, i
+    integer :: start, end, maskk, i
     integer :: travel_bit, modulus, g
     integer :: gray_encode
 
@@ -94,6 +102,7 @@ end function child_start
 function child_end(p_start, p_end, maskk, i)
   ! consider making this 2 funcitons, one for start, one for end
   ! or one function, but call it twice with dif values
+  use gray_module
   implicit none
   integer :: child_end
   integer :: p_start, p_end, maskk, i
@@ -110,26 +119,27 @@ contains
 
   function transpose_bits(srcs, ndests)
     implicit none
-    integer :: transpose_bits(ndests)
-    integer :: dests(ndests)
+    integer, allocatable :: transpose_bits(:) ! this is suspect
+    integer, allocatable :: dests(:)
     integer :: ndests
-    integer :: srcs(:)
+    integer, allocatable :: srcs(:)
     ! TODO: have srcs have a proper bound
     integer :: nsrcs, dest, j, k, sk
 
-    nsrcs = size(srcs)
+    ! nsrcs = size(srcs)
 
-    do j = ndests - 1, -1, -1
-       dest = 0
-       do k = 1, nsrcs
-          sk = srcs(k)
-          dest = (dest * 2) + mod(sk, 2)
-          srcs(k) = sk / 2
-       end do
-       dests(j) = dest
-    end do
+    ! do j = ndests - 1, -1, -1
+    !    dest = 0
+    !    do k = 1, nsrcs
+    !       sk = srcs(k)
+    !       dest = (dest * 2) + mod(sk, 2)
+    !       srcs(k) = sk / 2
+    !    end do
+    !    dests(j) = dest
+    ! end do
 
-    transpose_bits = srcs
+    ! transpose_bits = dests
+    transpose_bits = [1,2]
   end function transpose_bits
 
 end module transpose_bits_module
@@ -152,7 +162,7 @@ contains
     use transpose_bits_module
     implicit none
     integer, allocatable :: unpack_coords(:)
-    integer :: coords(2)
+    integer, allocatable :: coords(:)
     integer :: biggest, nchunks
     real(8) :: logg
 
@@ -161,6 +171,7 @@ contains
     nchunks = max(1, ceiling(logg(1 + biggest, 2)))
 
     unpack_coords = transpose_bits(coords, nchunks)
+
   end function unpack_coords
 
 end module unpack_coords_module
@@ -221,19 +232,48 @@ function initial_end(nchunks, nd)
   initial_end = 2 ** mod((-1 * nchunks) - 1, nd)
 end function initial_end
 
+subroutine test(pic) bind(c)
+  !use, intrinsic :: iso_c_binding, only : c_double
+  implicit none
+  integer :: pic(1920 * 1282)
+  integer :: pic2(1920 * 1282)
+  integer :: i, pic_size, max_h, max_color_h, width, height
+  integer :: p, x, y, r, g, b, h, x2, y2, h2, p2
+  integer, allocatable :: coords(:)
 
-module int_to_coord_module
+  pic2 = pic
+  pic_size = size(pic)
+  width = int(sqrt(real(pic_size)))
+
+  coords = [1, 2]
+  print*, 1
+  max_h = coord_to_int(coords)
+  print*, 2
+
+  do i = 1, 10
+     ! p = pic(i)
+     ! x = mod(i, width)
+     ! y = i / width
+     ! ! h = coord_to_int([x, y])
+     ! ! coords = int_to_coord(mod(h + 1000, max_h), 2)
+     ! coords = int_to_coord(mod(100 * i, pic_size), 2)
+     ! h2 = coords(1) + (width * coords(2))
+     ! p2 = pic(mod(h2, pic_size))
+     p2 = 100
+     pic(i) = p2
+  end do
+
 contains
 
   function int_to_coord(i, nd)
     use transpose_bits_module
     use unpack_index_module
+    use gray_module
     implicit none
     integer, allocatable :: int_to_coord(:)
     integer, allocatable :: index_chunks(:)
     integer, allocatable :: coord_chunks(:)
 
-    integer :: gray_encode_travel
     integer :: child_start
     integer :: child_end
     integer :: initial_end
@@ -261,25 +301,21 @@ contains
     int_to_coord = transpose_bits(coord_chunks, nd)
   end function int_to_coord
 
-end module int_to_coord_module
-
-module coord_to_int_module
-contains
 
   function coord_to_int(coords)
     use unpack_coords_module
     use pack_index_module
+    use gray_module
     implicit none
     integer :: coord_to_int
     integer, allocatable :: coord_chunks(:)
     integer, allocatable :: index_chunks(:)
 
-    integer :: gray_decode_travel
     integer :: child_start
     integer :: child_end
     integer :: initial_end
 
-    integer :: coords(:)
+    integer, allocatable :: coords(:)
     integer :: nd, nchunks, mask, start, start2, endd, endd2
     integer :: j, k
 
@@ -303,33 +339,4 @@ contains
     coord_to_int = pack_index(index_chunks, nd)
   end function coord_to_int
 
-end module coord_to_int_module
-
-subroutine test(pic) bind(c)
-  !use, intrinsic :: iso_c_binding, only : c_double
-  use int_to_coord_module
-  use coord_to_int_module
-  implicit none
-  integer :: pic(1920 * 1282)
-  integer :: pic2(1920 * 1282)
-  integer :: i, pic_size, max_h, max_color_h, width, height
-  integer :: p, x, y, r, g, b, h, x2, y2, h2, p2
-  integer :: coords(2)
-
-  pic2 = pic
-  pic_size = size(pic)
-  width = int(sqrt(real(pic_size)))
-
-  do i = 1, 10
-     p = pic(i)
-     x = mod(i, width)
-     y = i / width
-     ! h = coord_to_int([x, y])
-     ! coords = int_to_coord(mod(h + 1000, max_h), 2)
-     coords = int_to_coord(mod(100 * i, pic_size), 2)
-     h2 = coords(1) + (width * coords(2))
-     p2 = pic(mod(h2, pic_size))
-     p2 = 100
-     pic(i) = p2
-  end do
 end subroutine test
