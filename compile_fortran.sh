@@ -29,5 +29,8 @@ for f in $FILES; do
     gfortran -shared -o $SO_PATH $O_PATH
 done
 
+
+# TODO: use this https://stackoverflow.com/questions/488333/gfortran-how-to-control-output-directory-for-mod-files
+
 # TODO: add this as lein task or build task or something (maybe on every save or something to avoid following problem)
 # TODO: compile files in the right order, or all at once. or have a makefile or some such where its explicit

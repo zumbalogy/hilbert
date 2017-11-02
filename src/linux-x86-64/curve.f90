@@ -320,14 +320,16 @@ subroutine test(pic) bind(c)
   pic_size = size(pic)
   width = int(sqrt(real(pic_size)))
 
-  do i = 1, size(pic) + 5 - size(pic)
+  do i = 1, 10
      p = pic(i)
      x = mod(i, width)
      y = i / width
-     h = coord_to_int([x, y])
-     coords = int_to_coord(mod(h + 1000, max_h), 2)
+     ! h = coord_to_int([x, y])
+     ! coords = int_to_coord(mod(h + 1000, max_h), 2)
+     coords = int_to_coord(mod(100 * i, pic_size), 2)
      h2 = coords(1) + (width * coords(2))
      p2 = pic(mod(h2, pic_size))
+     p2 = 100
      pic(i) = p2
   end do
 end subroutine test
