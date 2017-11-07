@@ -253,31 +253,32 @@ end function initial_end
 subroutine test(pic) bind(c)
   !use, intrinsic :: iso_c_binding, only : c_double
   implicit none
-  integer :: pic(1920 * 1282)
-  integer :: pic2(1920 * 1282)
+  integer :: pic(256 * 256)
+  integer :: pic2(256 * 256)
   integer :: i, pic_size, max_h, max_color_h, width, height
   integer :: p, x, y, r, g, b, h, x2, y2, h2, p2
   integer, allocatable :: coords(:)
+  integer, allocatable :: xy(:)
 
   pic2 = pic
   pic_size = size(pic)
   width = int(sqrt(real(pic_size)))
 
   coords = [1, 2]
-  print*, 1
   max_h = coord_to_int(coords)
-  print*, 2
 
-  do i = 1, 10
-     ! p = pic(i)
-     ! x = mod(i, width)
-     ! y = i / width
-     ! ! h = coord_to_int([x, y])
-     ! ! coords = int_to_coord(mod(h + 1000, max_h), 2)
-     ! coords = int_to_coord(mod(100 * i, pic_size), 2)
+
+  do i = 1, pic_size
+     p = pic(i)
+     x = mod(i, width)
+     y = i / width
+     xy = [x, y]
+     h = coord_to_int(xy)
+     print*, i
+     coords = int_to_coord(mod(h + 1000, max_h), 2)
      ! h2 = coords(1) + (width * coords(2))
-     ! p2 = pic(mod(h2, pic_size))
-     p2 = 100
+     h2 = 4 + (width * 2)
+     p2 = pic(mod(h2, pic_size))
      pic(i) = p2
   end do
 
@@ -300,7 +301,11 @@ contains
     integer :: nchunks, mask, start, endd
     integer :: j, chunk, start2, endd2
 
+    print*, "this is in inttocorrd)"
+
     index_chunks = unpack_index(i, nd)
+
+    print*, "after"
     nchunks = size(index_chunks)
     mask = (2 ** nd) - 1
     start = 0
@@ -337,8 +342,6 @@ contains
     integer :: nd, nchunks, mask, start, start2, endd, endd2
     integer :: j, k
 
-    print*, 3243232
-
     nd = size(coords)
     coord_chunks = unpack_coords(coords)
     nchunks = size(coord_chunks)
@@ -348,22 +351,14 @@ contains
     index_chunks(:) = 0 ! might want to allocate this size and not just do it in the loop
 
 
-    print*, "this is number 55"
     do j = 1, nchunks
-       print*, j
        k = gray_decode_travel(start, endd, mask, coord_chunks(j))
-       print*, k
        start2 = child_start(start, endd, mask, k)
-       print*, start2
        endd2 = child_end(start, endd, mask, k)
-       print*, endd2, "qqqqqqqqqqqqqq"
        index_chunks(j) = k
-       print*, nchunks, "sdfd"
        start = start2
        endd = endd2
     end do
-
-    print*, "do i get this far?"
 
     coord_to_int = pack_index(index_chunks, nd)
   end function coord_to_int
