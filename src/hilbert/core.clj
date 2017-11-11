@@ -82,8 +82,8 @@
 
 (defn -main []
   (dotimes [i 1]
-   (let [pic (img/load-image "resources/fish_256.png")
-    ;; (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
+   ;; (let [pic (img/load-image "resources/fish_256.png")
+    (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
           pixels (img/get-pixels pic)]
       ;; (time (jna/invoke Integer curve/test pixels))
       (time (jna/invoke Integer attract/test pixels))
