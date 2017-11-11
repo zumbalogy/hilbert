@@ -26,10 +26,16 @@ subroutine test(pic) bind(c)
      ! 0x000000ff == 225
      b = iand(p, 255)
 
-     r2 = int(x + (0.01 * x * (r - b)))
-     g2 = int(g)
-     b2 = int(sin(y * b) + (z * sin(real(b))))
 
+     if ((r + b + g * 100000000) < pic(i + 1)) then
+        r2 = int(sin(real(i / 256) * 5) + (1 * sin(real(i * x))))
+        g2 = int(sin(real(i / 100) * y) + (1 * sin(real(i * z))))
+        b2 = int(sin(real(i / 7) * y) + (1 * sin(real(i * w))))
+     else
+        r2 = int(x + (0.01 * x * (r - b)))
+        g2 = int(g)
+        b2 = int(sin(y * b) + (z * sin(real(b))))
+     end if
      r = r2
      g = g2
      b = b2
@@ -44,6 +50,11 @@ subroutine test(pic) bind(c)
   end do
 
 end subroutine test
+
+! (defn clifford [[x y]]
+!   (let [x2 (+ (Math/sin (* @a y)) (* @c (Math/cos (* @a x))))
+!         y2 (+ (Math/sin (* @b x)) (* @d (Math/cos (* @b y))))]
+!     [x2 y2]))
 
 
 ! (defn lorenz [[x y z]]
