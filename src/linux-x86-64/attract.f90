@@ -5,7 +5,7 @@ subroutine test(pic) bind(c)
   integer :: pic(256 * 256)
   integer :: pic_size
   integer :: i
-  integer :: r, g, b
+  integer :: r, g, b, r2, g2, b2
   integer :: p, p2
   real :: w, x, y, z
 
@@ -26,6 +26,14 @@ subroutine test(pic) bind(c)
      ! 0x000000ff == 225
      b = iand(p, 255)
 
+     r2 = int(x + (0.01 * x * (r - b)))
+     g2 = int(g)
+     b2 = int(sin(y * b) + (z * sin(real(b))))
+
+     r = r2
+     g = g2
+     b = b2
+
      ! -16777216 = -1000000 hex
      p2 = -16777216
      p2 = ior(p2, lshift(iand(r, 255), 16))
@@ -36,3 +44,10 @@ subroutine test(pic) bind(c)
   end do
 
 end subroutine test
+
+
+! (defn lorenz [[x y z]]
+!   (let [x2 (+ x (* 0.01 @b (- y x)))
+!         y2 (+ y (* 0.01 (- (* x (- 28 z)) y)))
+!         z2 (+ z (* 0.01 (- (* y x) (* @d z))))]
+!     [x2 y2 z2]))

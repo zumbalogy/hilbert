@@ -11,7 +11,6 @@
         y2 (+ (Math/sin (* @b x)) (* @d (Math/cos (* @b y))))]
     [x2 y2]))
 
-
 (defn lorenz [[x y z]]
   (let [x2 (+ x (* 0.01 @b (- y x)))
         y2 (+ y (* 0.01 (- (* x (- 28 z)) y)))
