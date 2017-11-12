@@ -3,54 +3,82 @@ subroutine test(pic) bind(c)
   implicit none
 
   ! integer :: pic(1920 * 1282)
-  integer :: pic(256 * 256)
-  integer :: pic_size
+  integer :: pic(300 * 300)
+  integer :: pic_size, pic_width, pic_height
   integer :: i
   integer :: r, g, b, r2, g2, b2
   integer :: p, p2
+  integer :: scale, index, j_scale, k_scale
   real :: w, x, y, z
-  real :: j, k
+  real :: j, k, j2, k2, j_index, k_index
 
-  w = 0.003
-  x = 28.0
-  y = 10.0
-  z = 2.6666
+
+  w = 1.533
+  x = 11.8
+  y = 1.62
+  z = 0.2
+
+
+  j = 0.1
+  k = 0.0
+
+  j_scale = 75
+  k_scale = 75
+
+  pic_width = 300
+  pic_height = 300
 
   pic_size = size(pic)
 
   do i = 1, pic_size
-     p = pic(i)
+     pic(i) = -16777216
+  end do
 
-     ! 0x00ff0000 == 16711680
-     r = rshift(iand(p, 16711680), 16)
-     ! 0x0000ff00 == 65280
-     g = rshift(iand(p, 65280), 8)
-     ! 0x000000ff == 225
-     b = iand(p, 255)
+  do i = 1, 5000000
+
+     j2 = sin(real(w * k)) + (y * cos(real(w * j)))
+     k2 = sin(real(y * j)) + (z * cos(real(y * k)))
+
+     ! Center the attractor
+     j_index = j2 + 3
+     k_index = k2 + 3
+
+     ! Scale it between 0 and 300
+     j_index = int(j_index * j_scale)
+     k_index = int(k_index * k_scale)
 
 
-     if ((r + b + g * 10) < pic(i + 1)) then
-        r2 = int(sin(real(i) * g) + (1 * sin(real(r * x))))
-        g2 = int(cos(real(g)) + (r * sin(real(i + z))))
-        b2 = int(sin(real(i) * y) + (0.1 * sin(real(i * w))))
-     else
-        r2 = int(x + (1 * x * (r - b + 3)))
-        g2 = int(g + i)
-        b2 = int(sin(real(i) * 3) * (z * sin(real(i))))
+     index = j_index + (k_index * 300)
+
+     if (index > 0) then
+        if (index < pic_size) then
+           pic(index) = min(pic(index) + 40, 0)
+        end if
      end if
 
+     ! pic(index) = 0
 
-     r = r2
-     g = g2
-     b = b2
+     j = j2
+     k = k2
+     ! p = pic(i)
 
-     ! -16777216 = -1000000 hex
-     p2 = -16777216
-     p2 = ior(p2, lshift(iand(r, 255), 16))
-     p2 = ior(p2, lshift(iand(g, 255), 8))
-     p2 = ior(p2, iand(b, 255))
+     ! ! 0x00ff0000 == 16711680
+     ! r = rshift(iand(p, 16711680), 16)
+     ! ! 0x0000ff00 == 65280
+     ! g = rshift(iand(p, 65280), 8)
+     ! ! 0x000000ff == 225
+     ! b = iand(p, 255)
 
-     pic(i) = p2
+
+
+
+     ! ! -16777216 = -1000000 hex
+     ! p2 = -16777216
+     ! p2 = ior(p2, lshift(iand(r, 255), 16))
+     ! p2 = ior(p2, lshift(iand(g, 255), 8))
+     ! p2 = ior(p2, iand(b, 255))
+
+     ! pic(i) = p2
   end do
 
 end subroutine test
