@@ -19,11 +19,11 @@ subroutine test(pic) bind(c)
   z = 0.2
 
 
-  j = 0.1
+  j = 0.0
   k = 0.0
 
-  j_scale = 75
-  k_scale = 75
+  j_scale = 50
+  k_scale = 50
 
   pic_width = 300
   pic_height = 300
