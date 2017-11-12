@@ -2,13 +2,14 @@ subroutine test(pic) bind(c)
   !use, intrinsic :: iso_c_binding, only : c_double
   implicit none
 
-  integer :: pic(1920 * 1282)
-  ! integer :: pic(256 * 256)
+  ! integer :: pic(1920 * 1282)
+  integer :: pic(256 * 256)
   integer :: pic_size
   integer :: i
   integer :: r, g, b, r2, g2, b2
   integer :: p, p2
   real :: w, x, y, z
+  real :: j, k
 
   w = 0.003
   x = 28.0
@@ -28,15 +29,17 @@ subroutine test(pic) bind(c)
      b = iand(p, 255)
 
 
-     if ((r + b + g * 1000000) < pic(i + 1)) then
+     if ((r + b + g * 10) < pic(i + 1)) then
         r2 = int(sin(real(i) * g) + (1 * sin(real(r * x))))
         g2 = int(cos(real(g)) + (r * sin(real(i + z))))
         b2 = int(sin(real(i) * y) + (0.1 * sin(real(i * w))))
      else
-        r2 = int(x + (0.1 * x * (r - b)))
-        g2 = int(g)
-        b2 = int(sin(y * b) + (z * sin(real(b))))
+        r2 = int(x + (1 * x * (r - b + 3)))
+        g2 = int(g + i)
+        b2 = int(sin(real(i) * 3) * (z * sin(real(i))))
      end if
+
+
      r = r2
      g = g2
      b = b2
