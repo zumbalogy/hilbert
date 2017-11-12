@@ -1,32 +1,31 @@
-subroutine test(pic) bind(c)
+subroutine test(pic, input_iteration) bind(c)
   !use, intrinsic :: iso_c_binding, only : c_double
   implicit none
 
   ! integer :: pic(1920 * 1282)
-  integer :: pic(3540 * 3540)
+  integer :: pic(5000 * 5000)
   integer :: pic_size, pic_width, pic_height
   integer :: i
   integer :: r, g, b, r2, g2, b2
   integer :: p, p2
   integer :: scale, index, j_scale, k_scale
+  integer, value :: input_iteration
   real :: w, x, y, z
-  real :: j, k, j2, k2, j_index, k_index
+  real (8) :: j, k, j2, k2, j_index, k_index
 
-
-  w =  -1.7
-  x = 1.8
+  w = -1.7
+  x =  real(1 + (input_iteration * 0.01))
   y = -1.9
-  z =-0.4
-
+  z = -0.4
 
   j = 0.0
   k = 0.0
 
-  j_scale = 600
-  k_scale = 600
+  j_scale = 800
+  k_scale = 800
 
-  pic_width = 3540
-  pic_height = 3540
+  pic_width = 5000
+  pic_height = 5000
 
   pic_size = size(pic)
 
@@ -34,10 +33,10 @@ subroutine test(pic) bind(c)
      pic(i) = -16777216
   end do
 
-  do i = 1, 160000000
+  do i = 1, 80000000
 
      j2 = sin(real(w * k)) + (y * cos(real(w * j)))
-     k2 = sin(real(y * j)) + (z * cos(real(y * k)))
+     k2 = sin(real(y * j)) + (z * cos(real(x * k)))
 
      ! Center the attractor
      j_index = j2 + 3
@@ -62,18 +61,12 @@ subroutine test(pic) bind(c)
            ! 0x000000ff == 225
            b = iand(p, 255)
 
-           !print*, r
-
            if (mod(i, 3) == 0) then
-              r = min(255, r + 1)
+              r = min(255, r + 3)
            else if (mod(i, 3) == 1) then
-              if (k2 > k) then
-                 g = min(255, g + 1)
-              end if
+              g = min(255, g + 1)
            else
-              if (j2 > j) then
-                 b = min(255, b + 1)
-              end if
+              b = min(255, b + 2)
            end if
 
            ! -16777216 = -1000000 hex
@@ -85,14 +78,8 @@ subroutine test(pic) bind(c)
            pic(index) = p2
         end if
      end if
-
-     ! pic(index) = 0
-
      j = j2
      k = k2
-     ! p = pic(i)
-
-
   end do
 
 end subroutine test

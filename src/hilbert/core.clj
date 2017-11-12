@@ -81,16 +81,17 @@
 
 
 (defn -main []
-  (dotimes [i 1]
-   ;; (let [pic (img/load-image "resources/fish_300.png")
-   (let [pic (img/load-image "resources/black_square_3540.jpg")
-    ;; (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
-          pixels (img/get-pixels pic)]
-      ;; (time (jna/invoke Integer curve/test pixels))
-      (time (jna/invoke Integer attract/test pixels))
-      (img/set-pixels pic pixels)
-      (show pic)
-      (img/save pic (str "output/" (System/currentTimeMillis) ".png"))
+  ;; (let [pic (img/load-image "resources/fish_300.png")
+  (let [pic (img/load-image "resources/square_5000.png")
+        ;; (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
+        pixels (img/get-pixels pic)]
+    ;; (time (jna/invoke Integer curve/test pixels))
+    (dotimes [i 1000]
+      (time (jna/invoke Integer attract/test pixels i))
+      (time (img/set-pixels pic pixels))
+      ;; (show pic)
+      (time (img/save pic (str "output/" i "_" (System/currentTimeMillis) ".png")))
+      (println)
       )))
 
 ;; (defn -main []
