@@ -86,11 +86,11 @@
         ;; (let [pic (img/load-image "resources/blue_bottle_1920_1282.jpg")
         pixels (img/get-pixels pic)]
     ;; (time (jna/invoke Integer curve/test pixels))
-    (dotimes [i 1000]
+    (dotimes [i 1]
       (time (jna/invoke Integer attract/test pixels i))
       (time (img/set-pixels pic pixels))
-      ;; (show pic)
-      (time (img/save pic (str "output/" i "_" (System/currentTimeMillis) ".png")))
+      (show pic)
+      (time (img/save pic (str "output/" (System/currentTimeMillis) "_" i ".png")))
       (println)
       )))
 

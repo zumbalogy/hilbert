@@ -43,3 +43,33 @@
         az (* a z)
         z2 (+ z (* t (- (+ l az czxxx) z3 (* ez xxyy))))]
     [x2 y2 z2]))
+
+;; (defn dejong [[x y]]
+;;   ; all constants have to be between pi and negative pi
+;;   (let [x2 (- (Math/sin (* @a y) (Math/cos (* @b x))))
+;;         y2 (- (Math/sin (* (+ @c 1) x)) (Math/cos (* (+ @d 1) y)))]
+;;     [x2 y2]))
+
+;; (defn svensson [[x y]]
+;;   (let [x2 (- (* @d (Math/sin (* @a x))) (Math/sin (* @b y)))
+;;         y2 (- (* @c (Math/cos (* @a x))) (Math/cos (* @b y)))]
+;;     [x2 y2]))
+
+
+;; (defn duffing [[x y]]
+;;   (let [h (/ @a 20)
+;;         x2 (+ x (* h y))
+;;         y2 (+ y (* h (+ (- x (* x x x) (* @c y)) (* @d (Math/cos @z)))))
+;;         z2 (+ @z h)]
+;;     (reset! z z2)
+;;     [x2 y2]))
+
+(defn triz [[x y]]
+  (let [x2 (/ x 2)
+        y2 (/ y 2)]
+    (rand-nth [[x2 y2]
+              ;  [(+ x2 0.5) (+ y2 0.86)]
+               [(+ x2 1) y2]
+               [x2 (- y2 1)]
+               [x2 (+ y2 1)]
+               [(- x2 1) y2]])))

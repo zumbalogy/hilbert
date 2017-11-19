@@ -10,19 +10,28 @@ subroutine test(pic, input_iteration) bind(c)
   integer :: p, p2
   integer :: scale, index, j_scale, k_scale
   integer, value :: input_iteration
-  real :: w, x, y, z
-  real (8) :: j, k, j2, k2, j_index, k_index
+  real (16) :: w, x, y, z
+  real (16) :: j, k, j2, k2, l, l2, j_index, k_index
 
-  w = -1.7
-  x =  real(1 + (input_iteration * 0.01))
-  y = -1.9
-  z = -0.4
+  ! w = -1.7
+  ! x =  (-1) + (4 * 0.01130001)
+  ! ! x = -0.943500001
+  ! y = -1.9
+  ! z = -0.4
 
-  j = 0.0
+  ! a = 10, b = 28, c = 8 / 3. Another is a = 28, b = 46.92, c = 4
+
+  !! lorenz
+  x = 10.0
+  y = 28.0
+  z = 8.0 / 3.0
+
+  j = 0.1
   k = 0.0
+  l = 0.0
 
-  j_scale = 800
-  k_scale = 800
+  j_scale = 1
+  k_scale = 1
 
   pic_width = 5000
   pic_height = 5000
@@ -33,24 +42,42 @@ subroutine test(pic, input_iteration) bind(c)
      pic(i) = -16777216
   end do
 
-  do i = 1, 80000000
+  do i = 1, 20
 
-     j2 = sin(real(w * k)) + (y * cos(real(w * j)))
-     k2 = sin(real(y * j)) + (z * cos(real(x * k)))
+     ! !! clifford
+     ! j2 = sin(real(w * k)) + (y * cos(real(w * j)))
+     ! k2 = sin(real(y * j)) + (z * cos(real(x * k)))
+
+     ! !! duffing
+     ! j2 = j + (w * y)
+     ! k2 = k + (w * ((j - (j * j * j) - (y * k)) + (z * cos(l))))
+     ! l2 = l + w
+
+     !! lorenz
+     j2 = j + (0.01 * x * (k - j))
+     k2 = k + (0.01 * ((j * (b - l)) - k))
+     l2 = l + (0.01 * ((j * k) - (z * l)))
+
+
 
      ! Center the attractor
      j_index = j2 + 3
      k_index = k2 + 3
 
-     ! Scale it between 0 and 300
+     ! Scale it
      j_index = int(j_index * j_scale)
      k_index = int(k_index * k_scale)
 
 
      index = j_index + (k_index * pic_width)
 
+
+
+     print*, index
+
      if (index > 0) then
         if (index < pic_size) then
+
 
            p = pic(index)
 
@@ -61,13 +88,23 @@ subroutine test(pic, input_iteration) bind(c)
            ! 0x000000ff == 225
            b = iand(p, 255)
 
-           if (mod(i, 3) == 0) then
-              r = min(255, r + 3)
-           else if (mod(i, 3) == 1) then
-              g = min(255, g + 1)
-           else
-              b = min(255, b + 2)
-           end if
+           ! if (mod(i, 3) == 0) then
+           !    r = min(255, r + 3)
+           ! else if (mod(i, 3) == 1) then
+           !    g = min(255, g + 2)
+           ! end if
+
+           ! r = min(255, r + 1)
+           ! b = min(255, b + 1)
+
+           b = 255
+           r = 255
+
+           ! if (r > 253) then
+           !    b = min(255, b + 70)
+           ! else
+           !    r = r + 2
+           ! end if
 
            ! -16777216 = -1000000 hex
            p2 = -16777216
@@ -83,15 +120,3 @@ subroutine test(pic, input_iteration) bind(c)
   end do
 
 end subroutine test
-
-! (defn clifford [[x y]]
-!   (let [x2 (+ (Math/sin (* @a y)) (* @c (Math/cos (* @a x))))
-!         y2 (+ (Math/sin (* @b x)) (* @d (Math/cos (* @b y))))]
-!     [x2 y2]))
-
-
-! (defn lorenz [[x y z]]
-!   (let [x2 (+ x (* 0.01 @b (- y x)))
-!         y2 (+ y (* 0.01 (- (* x (- 28 z)) y)))
-!         z2 (+ z (* 0.01 (- (* y x) (* @d z))))]
-!     [x2 y2 z2]))
