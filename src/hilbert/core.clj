@@ -10,8 +10,11 @@
 (defn show [pic]
   (let [width (img/width pic)
         height (img/height pic)
-        size (* width height)]
-    (img/show pic :zoom (if (< size 100000) 5 1) :title (rand))))
+        size (* width height)
+        zoom (cond (< size 100000) 5
+                   (> size 5000000) 0.3
+                   :else 1)]
+    (img/show pic :zoom zoom :title (rand))))
 
 (def rgb color/components-rgb)
 

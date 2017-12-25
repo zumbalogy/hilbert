@@ -30,8 +30,8 @@ subroutine test(pic, input_iteration) bind(c)
   k = 0.0
   l = 0.0
 
-  j_scale = 1
-  k_scale = 1
+  j_scale = 0.1
+  k_scale = 0.1
 
   pic_width = 5000
   pic_height = 5000
