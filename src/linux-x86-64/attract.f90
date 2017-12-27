@@ -27,11 +27,11 @@ subroutine test(pic, input_iteration) bind(c)
   z = 8.0 / 3.0
 
   j = 0.1
-  k = 0.0
-  l = 0.0
+  k = 0.1
+  l = 0.1
 
-  j_scale = 0.1
-  k_scale = 0.1
+  j_scale = 100
+  k_scale = 100
 
   pic_width = 5000
   pic_height = 5000
@@ -42,7 +42,7 @@ subroutine test(pic, input_iteration) bind(c)
      pic(i) = -16777216
   end do
 
-  do i = 1, 20
+  do i = 1, 500000
 
      ! !! clifford
      ! j2 = sin(real(w * k)) + (y * cos(real(w * j)))
@@ -55,29 +55,21 @@ subroutine test(pic, input_iteration) bind(c)
 
      !! lorenz
      j2 = j + (0.01 * x * (k - j))
-     k2 = k + (0.01 * ((j * (b - l)) - k))
+     k2 = k + (0.01 * ((j * (y - l)) - k))
      l2 = l + (0.01 * ((j * k) - (z * l)))
 
-
-
      ! Center the attractor
-     j_index = j2 + 3
-     k_index = k2 + 3
+     j_index = j2 + 24
+     k_index = k2 + 24
 
      ! Scale it
      j_index = int(j_index * j_scale)
      k_index = int(k_index * k_scale)
 
-
      index = j_index + (k_index * pic_width)
-
-
-
-     print*, index
 
      if (index > 0) then
         if (index < pic_size) then
-
 
            p = pic(index)
 
@@ -117,6 +109,7 @@ subroutine test(pic, input_iteration) bind(c)
      end if
      j = j2
      k = k2
+     l = l2
   end do
 
 end subroutine test
