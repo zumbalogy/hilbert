@@ -42,7 +42,7 @@ subroutine test(pic, input_iteration) bind(c)
      pic(i) = -16777216
   end do
 
-  do i = 1, 500000
+  do i = 1, 95000000
 
      ! !! clifford
      ! j2 = sin(real(w * k)) + (y * cos(real(w * j)))
@@ -86,17 +86,13 @@ subroutine test(pic, input_iteration) bind(c)
            !    g = min(255, g + 2)
            ! end if
 
-           ! r = min(255, r + 1)
-           ! b = min(255, b + 1)
+           r = min(255, r + 1)
 
-           b = 255
-           r = 255
+           if (r > 253) then
+              b = min(255, b + 1)
+           end if
 
-           ! if (r > 253) then
-           !    b = min(255, b + 70)
-           ! else
-           !    r = r + 2
-           ! end if
+           g = min(255, g + int(l2 / 4))
 
            ! -16777216 = -1000000 hex
            p2 = -16777216
