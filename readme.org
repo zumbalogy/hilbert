@@ -10,6 +10,7 @@ The code is dirty and prone to changing.
 
   Attractor with somewhere between 10-50 million dots per frame:
 
+  #+attr_html: :width 400px
   [[./examples/file2.gif]]
 
   Moving colors along a Hilbert curve though RGB color-space:
