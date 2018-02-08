@@ -28,7 +28,7 @@ The code is dirty and prone to changing.
 
 * See Also
 
-only 2d http://codegists.com/snippet/clojure/hilbertclj_cgrand_clojure
+http://codegists.com/snippet/clojure/hilbertclj_cgrand_clojure
 http://web.archive.org/web/20041102084739/http://www.caam.rice.edu/~dougm/twiddle/Hilbert/hilbert.c
 http://www.tiac.net/~sw/2008/10/Hilbert/
 http://www.fundza.com/algorithmic/space_filling/hilbert/basics/
