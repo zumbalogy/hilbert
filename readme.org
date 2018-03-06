@@ -10,7 +10,6 @@ The code is dirty and prone to changing.
 
   Attractor with somewhere between 10-50 million dots per frame:
 
-  #+attr_html: :width 400px
   [[./examples/file2.gif]]
 
   Moving colors along a Hilbert curve though RGB color-space:
@@ -41,4 +40,5 @@ http://codegists.com/snippet/clojure/hilbertclj_cgrand_clojure
 http://web.archive.org/web/20041102084739/http://www.caam.rice.edu/~dougm/twiddle/Hilbert/hilbert.c
 http://www.tiac.net/~sw/2008/10/Hilbert/
 http://www.fundza.com/algorithmic/space_filling/hilbert/basics/
-http://codegolf.stackexchange.com/questions/66958/map-string-to-hilbert-curve/67178
+http://codegolf.stackexchange.com/questions/66958/map-string-to-hilbert-curve/6717
+https://github.com/adishavit/hilbert
