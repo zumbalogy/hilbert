@@ -2,6 +2,8 @@
 
 Image experiments with hilbert curves and strange attractors, in Clojure with Fortran interop.
 
+A simpler example of Clojure/Fortran interop can be seen here: https://github.com/zumbalogy/fortran_interop
+
 This is the spiritual successor to https://github.com/zumbalogy/attract.
 
 The code is dirty and prone to changing.
